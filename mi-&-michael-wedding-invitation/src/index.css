@@ -1,0 +1,48 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=Cormorant+Infant:ital,wght@1,600&family=Montserrat:wght@200;300;400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Cormorant Garamond", ui-serif, Georgia, serif;
+  --font-infant: "Cormorant Infant", serif;
+
+  --color-burgundy: #7B1F3A;
+  --color-burgundy-deep: #5C1529;
+  --color-gold: #C4973A;
+  --color-gold-light: #D4A94A;
+  --color-cream: #F5EDE0;
+  --color-cream-dark: #EAD9C4;
+  --color-ivory: #FAF6F0;
+  --color-text-dark: #2C1810;
+  --color-text-mid: #5C3D2E;
+  --color-text-light: #8C6B55;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-ivory text-text-dark font-sans overflow-x-hidden;
+  }
+}
+
+@keyframes floatOrb {
+  0% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-20px) scale(1.02); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes scrollDown {
+  0% { transform: scaleY(0); transform-origin: top; opacity: 1; }
+  50% { transform: scaleY(1); transform-origin: top; opacity: 1; }
+  100% { transform: scaleY(1); transform-origin: bottom; opacity: 0; }
+}
+
+.animate-float-orb {
+  animation: floatOrb linear infinite;
+}
+
+.animate-scroll-down {
+  animation: scrollDown 2s ease infinite;
+}

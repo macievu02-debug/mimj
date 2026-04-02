@@ -1,0 +1,25 @@
+{
+  "entities": {
+    "RSVP": {
+      "title": "RSVP",
+      "description": "Guest RSVP response",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "description": "Full name of the guest" },
+        "email": { "type": "string", "format": "email", "description": "Email address" },
+        "attending": { "type": "boolean", "description": "Whether the guest is attending" },
+        "guests": { "type": "integer", "description": "Number of additional guests" },
+        "dietary": { "type": "string", "description": "Dietary restrictions or allergies" },
+        "message": { "type": "string", "description": "Message to the couple" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the RSVP was submitted" }
+      },
+      "required": ["name", "attending", "guests"]
+    }
+  },
+  "firestore": {
+    "rsvps/{rsvpId}": {
+      "schema": "RSVP",
+      "description": "Collection of guest RSVPs"
+    }
+  }
+}

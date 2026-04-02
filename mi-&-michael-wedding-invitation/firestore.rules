@@ -1,0 +1,67 @@
+// ===============================================================
+// Assumed Data Model
+// ===============================================================
+//
+// This security rules file assumes the following data structures:
+//
+// Collection: rsvps
+// Document ID: auto-generated
+// Fields:
+//   - name: string (required, 1-100 chars) - Guest full name
+//   - email: string (optional, email format) - Guest email
+//   - attending: bool (required) - Attendance status
+//   - guests: number (required, 0-10) - Number of additional guests
+//   - dietary: string (optional, 0-500 chars) - Dietary restrictions
+//   - message: string (optional, 0-1000 chars) - Message to the couple
+//   - createdAt: timestamp (required) - Submission time
+//
+// ===============================================================
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin' ||
+          (request.auth.token.email == "vuhami02@gmail.com" && request.auth.token.email_verified == true) ||
+          (request.auth.token.email == "macievu02@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isValidRSVP(data) {
+      return data.keys().hasAll(['name', 'attending', 'guests', 'createdAt']) &&
+             data.name is string && data.name.size() > 0 && data.name.size() <= 100 &&
+             data.attending is bool &&
+             data.guests is int && data.guests >= 0 && data.guests <= 10 &&
+             data.createdAt is timestamp &&
+             (!('email' in data) || (data.email is string && data.email.size() <= 100)) &&
+             (!('dietary' in data) || (data.dietary is string && data.dietary.size() <= 500)) &&
+             (!('message' in data) || (data.message is string && data.message.size() <= 1000));
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /rsvps/{rsvpId} {
+      // Anyone can submit an RSVP
+      allow create: if isValidRSVP(request.resource.data);
+      
+      // Only admins can read or manage RSVPs
+      allow read, update, delete: if isAdmin();
+    }
+
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow write: if isAdmin();
+    }
+  }
+}
